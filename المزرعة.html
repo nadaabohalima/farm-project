@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الزراعة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .result {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .plant-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .plant-info img {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .plant-info p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>بوابة الزراعة</h1>
+        <p>اكتب اسم النبات للحصول على التفاصيل:</p>
+        <input type="text" id="search" placeholder="اكتب اسم النبات...">
+        
+        <div id="result" class="result">
+
+        </div>
+    </div>
+
+    <script>
+
+        const plantsDatabase = [
+            {
+                name: "طماطم",
+                image: "https://png.pngtree.com/thumb_back/fw800/background/20231103/pngtree-captivating-images-of-red-tomatoes-perfect-for-backgrounds-and-textures-image_13782153.png",
+                month: "من فبراير إلى أبريل",
+                tips: "حافظ على الري المنتظم وتجنب الري الزائد.",
+                symptoms: "اصفرار الأوراق وتباطؤ النمو.",
+                solution: "زيادة الري والتأكد من تهوية التربة."
+            },
+            {
+                name: "خيار",
+                image: "https://static.webteb.net/images/content/tbl_articles_article_14162_674d2444462-d407-4e8a-b82d-60f0e2d51365.jpg",
+                month: "من مارس إلى مايو",
+                tips: "يفضل الزراعة في تربة جيدة التصريف.",
+                symptoms: "ضعف في النمو وظهور بقع صفراء.",
+                solution: "زيادة الري واستخدام أسمدة تحتوي على النيتروجين."
+            },
+            {
+                name: "جزر",
+                image: "https://m.al-sharq.com/get/maximage/20170921_1505966807-165324.jpg?t=1505966807",  
+                month: "من نوفمبر إلى فبراير",
+                tips: "تأكد من تهوية التربة للحفاظ على الجذور صحية.",
+                symptoms: "ضعف في النمو وصغر حجم الجذور.",
+                solution: "زيادة مسافة الزراعة وتسميد التربة."
+            },
+            {
+                name: "باذنجان",
+                image: "https://th.bing.com/th/id/OIP.277jrZ0ZAm97ClW_BHz9-gHaEJ?rs=1&pid=ImgDetMain",  
+                month: "من أبريل إلى يونيو",
+                tips: "يزدهر في المناطق المشمسة. يفضل التربة الطينية الجيدة التصريف.",
+                symptoms: "ذبول الأوراق وتحولها إلى اللون الأصفر.",
+                solution: "زيادة الري والتأكد من توفر المغذيات الأساسية."
+            },
+            {
+                name: "فلفل",
+                image: "https://th.bing.com/th/id/R.e7a5ee7da125f3215ebc115057db0096?rik=cuZ%2b31Sy3Tntaw&pid=ImgRaw&r=0", 
+                month: "من مارس إلى مايو",
+                tips: "تحتاج إلى الكثير من الشمس والتربة الغنية بالمواد العضوية.",
+                symptoms: "أوراق صفراء وفواكه صغيرة.",
+                solution: "التأكد من الري المنتظم وإضافة الأسمدة."
+            },
+            {
+                name: "سبانخ",
+                image: "https://th.bing.com/th/id/OIP.itsbAz20_9yZutP01ltOewHaEO?rs=1&pid=ImgDetMain",  
+                month: "من أكتوبر إلى فبراير",
+                tips: "يفضل الجو البارد مع تربة غنية بالمواد العضوية.",
+                symptoms: "تحول الأوراق إلى اللون الأصفر أو الذبول.",
+                solution: "زيادة الري واستخدام الأسمدة المناسبة."
+            },
+            {
+                name: "ريحان",
+                image: "https://th.bing.com/th/id/R.85da8e7660c2a04b9bb7ec63559c3847?rik=JVKjp6XiMN%2fUEw&pid=ImgRaw&r=0",  
+                month: "من مارس إلى أغسطس",
+                tips: "يحتاج إلى تربة خفيفة ورطبة مع تعرض كافٍ للشمس.",
+                symptoms: "ظهور بقع بنية على الأوراق.",
+                solution: "تجنب الري الزائد وزيادة التهوية."
+            },
+            {
+                name: "كرفس",
+                image: "https://th.bing.com/th/id/R.a556d5b481490d69cca03f4ce08392c9?rik=tI82EIVhHSxutQ&pid=ImgRaw&r=0",  
+                month: "من فبراير إلى أبريل",
+                tips: "يحتاج إلى تربة رطبة وغنية بالعناصر الغذائية.",
+                symptoms: "ذبول الأوراق وصغر حجم السيقان.",
+                solution: "زيادة الري واستخدام أسمدة غنية بالنيتروجين."
+            },
+            {
+                name: "نعناع",
+                image: "https://th.bing.com/th/id/OIP.LkMrmjMDbA_LZ0s8Bh2_GAHaEU?rs=1&pid=ImgDetMain", 
+                month: "من مارس إلى أكتوبر",
+                tips: "يفضل الري المنتظم ولا يتطلب الكثير من العناية.",
+                symptoms: "ذبول الأوراق أو ظهور بقع بنية.",
+                solution: "زيادة الري وتجنب الري الزائد."
+            }
+        ];
+
+
+        document.getElementById("search").addEventListener("input", function() {
+            const query = this.value.toLowerCase();
+            const resultDiv = document.getElementById("result");
+
+            const foundPlants = plantsDatabase.filter(plant => plant.name.toLowerCase().includes(query));
+
+            if (foundPlants.length > 0) {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = ""; 
+                foundPlants.forEach(plant => {
+                    const plantDiv = document.createElement("div");
+                    plantDiv.classList.add("plant-info");
+
+                    plantDiv.innerHTML = `
+                        <img src="${plant.image}" alt="${plant.name}">
+                        <h3>${plant.name}</h3>
+                        <p><strong>شهر الزراعة:</strong> ${plant.month}</p>
+                        <p><strong>نصائح للحفاظ عليه:</strong> ${plant.tips}</p>
+                        <p><strong>الأعراض:</strong> ${plant.symptoms}</p>
+                        <p><strong>الحل:</strong> ${plant.solution}</p>
+                        <button onclick="alert('تمت إضافة ${plant.name} إلى المفضلة!')">إضافة إلى المفضلة</button>
+                    `;
+                    resultDiv.appendChild(plantDiv);
+                });
+            } else {
+                resultDiv.style.display = "none";
+            }
+        });
+    </script>
+    <script>
+        function goToPage2() {
+          window.location.href = "index.html";  // Navigates to the second page
+        }
+      </script>
+</body>
+</html>
